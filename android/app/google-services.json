@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "901375679003",
+    "firebase_url": "https://high-connect-default-rtdb.firebaseio.com",
+    "project_id": "high-connect",
+    "storage_bucket": "high-connect.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:901375679003:android:e8de6bf2d733b023e776be",
+        "android_client_info": {
+          "package_name": "com.example.highconnect"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "901375679003-jr5rdn3d4bfvdpc5trvccofa1srecqqh.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCccc0a83H6n6aFrpL_nxTjyY1GN5wiv78"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "901375679003-jr5rdn3d4bfvdpc5trvccofa1srecqqh.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
