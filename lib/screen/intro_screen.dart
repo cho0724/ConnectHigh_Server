@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../component/alert_dialog.dart';
@@ -46,7 +47,7 @@ class _MyAppState extends State<MyApp> {
             ElevatedButton(
               onPressed: tryLogin,
               child: Text('시작하기'),
-            )
+            ),
           ],
         ),
       ),
