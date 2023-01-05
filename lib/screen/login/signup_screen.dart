@@ -401,7 +401,7 @@ class _signUpState extends State<signUp> {
     CustomCircular(context, '중복 확인 중...');
     try {
       response = await dio
-          .post(AndroidBaseURL + '/api/create/checkIDdupl', data: {
+          .post(BaseURL + '/api/create/checkIDdupl', data: {
         'id': _idTextController.text,
       });
      if(response.data == "can use"){
@@ -449,7 +449,7 @@ class _signUpState extends State<signUp> {
     CustomCircular(context, '중복 확인 중...');
     try {
       response = await dio
-          .post(AndroidBaseURL + '/api/create/checkNickNamedupl', data: {
+          .post(BaseURL + '/api/create/checkNickNamedupl', data: {
         'nickName': _nicknameTextController.text,
       });
       if(response.data == "can use"){
@@ -549,7 +549,7 @@ class _signUpState extends State<signUp> {
       if(_duplicationIdCheck == 1 && _duplicationNickCheck == 1) {
         CustomCircular(context, '회원가입 진행중...');
         try {
-          response = await dio.post(AndroidBaseURL + '/api/create', data: {
+          response = await dio.post(BaseURL + '/api/create', data: {
             'id': _idTextController.text,
             'pw': _pwTextController.text,
             'nickName': _nicknameTextController.text,
