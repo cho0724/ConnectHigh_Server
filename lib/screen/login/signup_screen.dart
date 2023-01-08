@@ -31,8 +31,6 @@ class _signUpState extends State<signUp> {
   final TextEditingController _emailTextController = TextEditingController();
   final TextEditingController _nicknameTextController = TextEditingController();
   final TextEditingController _realNameTextController = TextEditingController();
-  final TextEditingController _phoneNumberTextController =
-      TextEditingController();
   FocusNode focusNode = FocusNode();
   String _searchText = '';
 
@@ -114,6 +112,7 @@ class _signUpState extends State<signUp> {
 
   var response;
   dynamic schoolTotalInformation = [];
+
   fetchData() async {
     response = await Dio().get(
       'https://open.neis.go.kr/hub/schoolInfo',
@@ -196,15 +195,13 @@ class _signUpState extends State<signUp> {
           schoolTotalInformation[i].SD_SCHUL_CODE;
     }
 
-    print(schoolNameToCodeMap);
+    //print(schoolNameToCodeMap);
 
     List<String> schoolNames = [
       for (int i = 0; i < schoolTotalInformation.length; i++)
         schoolTotalInformation[i].SCHUL_NM
     ];
-
-    print(schoolNames.length);
-
+    //print(schoolNames.length);
     // return schoolNames;
   }
 
@@ -236,11 +233,13 @@ class _signUpState extends State<signUp> {
                           Controller: _idTextController,
                           textInputType: TextInputType.text,
                         ),
+
                         CustomButton(
                           istext: true,
                           text: 'ID 중복체크', //text 가 false 면 버튼안에 내용이 화살표아이콘
                           onPressed: onCheckIdPressed, //계정생성 버튼.
                         ),
+
                         const SizedBox(height: 16),
                         CustomTextField(
                           label: 'password 입력',
@@ -267,10 +266,12 @@ class _signUpState extends State<signUp> {
                           Controller: _nicknameTextController,
                           textInputType: TextInputType.text,
                         ),
+
                         CustomButton(
                             text: '닉네임 중복체크',
                             istext: true,
                             onPressed: onCheckNickNamePressed),
+
                         const SizedBox(height: 16),
                         CustomTextField(
                           label: '실명', // 학교인증용
@@ -365,11 +366,6 @@ class _signUpState extends State<signUp> {
                           }).toList(),
                         ),
                         const SizedBox(height: 16),
-                        CustomTextField(
-                          label: 'Phone Number',
-                          Controller: _phoneNumberTextController,
-                          textInputType: TextInputType.phone,
-                        ),
                         const SizedBox(
                           height: 50,
                         ),
@@ -394,12 +390,40 @@ class _signUpState extends State<signUp> {
 
   int _duplicationIdCheck = 0;
   int _duplbtnidchecker = 0;
-  int _duplicationNickCheck = 1;
+  int _duplicationNickCheck = 0;
   int _duplbtnnickchecker = 0;
   String userEmail = '';
 
   void onCheckIdPressed() async {
-    DocumentSnapshot userData;
+    Response response;
+    var dio = Dio();
+
+    CustomCircular(context, '중복 확인 중...');
+    try {
+      response = await dio
+          .post(BaseURL + '/api/create/checkIDdupl', data: {
+        'id': _idTextController.text,
+      });
+     if(response.data == "can use"){
+        Navigator.pop(context);
+        DialogShow(context, '사용 가능한 ID입니다.');
+        print(response.data);
+        _duplicationIdCheck = 1;
+      }
+        else if(response.data == "cannot use"){
+        Navigator.pop(context);
+        DialogShow(context, '중복된 아이디가 존재합니다.');
+        print(response.data);
+      }
+      if (response.data == "err 발생") {
+        Navigator.pop(context);
+        DialogShow(context, '에러 발생.');
+      }
+    } catch (e) {
+      print("에러 발생");
+    }
+
+    /*DocumentSnapshot eehd도userData;
     try {
       CustomCircular(context, '중복 확인 중...');
       userData =
@@ -413,59 +437,43 @@ class _signUpState extends State<signUp> {
       DialogShow(context, '사용 가능한 ID입니다.');
       _duplicationIdCheck = 1;
       _duplbtnidchecker = 1;
-    }
+    }*/
   }
 
   int checker = 0;
 
   void onCheckNickNamePressed() async {
-    /*await firestore.collection('users').snapshots().listen((data) {
-      data.docs.forEach((element) {
-        print(element['nick name']);
-        if (element['nick name'] == _nicknameTextController.text) {
-          _duplicationNickCheck = 0;
-          _duplbtnnickchecker = 0;
-          Navigator.pop(context);
-          DialogShow(context, '중복된 닉네임이 존재합니다.');
-          print(element['nick name']);
-        }
-      });
-    });
-    if (_duplicationNickCheck != 0) {
-      Navigator.pop(context);
-      DialogShow(context, '사용 가능한 닉네임입니다.');
-      _duplicationNickCheck = 1;
-      _duplbtnnickchecker = 1;
-    }*/
-    String nickName = '';
+    Response response;
+    var dio = Dio();
+
+    CustomCircular(context, '중복 확인 중...');
     try {
-      CustomCircular(context, '중복 확인 중...');
-      await firestore
-          .collection('users')
-          .where('nick name', isEqualTo: _nicknameTextController.text)
-          .get()
-          .then((QuerySnapshot data) {
-        data.docs.forEach((element) {
-          nickName = element['nick name'];
-        });
+      response = await dio
+          .post(BaseURL + '/api/create/checkNickNamedupl', data: {
+        'nickName': _nicknameTextController.text,
       });
-      Navigator.pop(context);
-      if (nickName == _nicknameTextController.text) {
-        DialogShow(context, '중복된 닉네임이 존재합니다.');
-        _duplicationNickCheck = 0;
-        _duplbtnnickchecker = 0;
-      } else {
-        DialogShow(context, '사용가능한 닉네임입니다.');
+      if(response.data == "can use"){
+        Navigator.pop(context);
+        DialogShow(context, '사용 가능한 닉네임입니다.');
         _duplicationNickCheck = 1;
-        _duplbtnnickchecker = 1;
+        print(response.data);
+      }
+      else if(response.data == "cannot use"){
+        Navigator.pop(context);
+        DialogShow(context, '중복된 닉네임이 존재합니다.');
+        print(response.data);
+      }
+      if (response.data == "err 발생") {
+        Navigator.pop(context);
+        DialogShow(context, '에러 발생.');
       }
     } catch (e) {
-      Navigator.pop(context);
-      DialogShow(context, '에러발생');
+      print("에러 발생");
     }
   }
 
-  void onSignUpPressed() {
+  void onSignUpPressed() async {
+    /*
     if (_duplicationIdCheck == 1 &&
         _duplbtnidchecker == 1 &&
         _duplicationNickCheck == 1 &&
@@ -531,6 +539,47 @@ class _signUpState extends State<signUp> {
         DialogShow(context, '이미 가입한 이메일이거나 서버 에러가 발생하였습니다.');
       }*/
     }
+  */
+    if (formKey.currentState == null) {
+      return;
+    }
+    if (formKey.currentState!.validate()) {
+      Response response;
+      var dio = Dio();
+      if(_duplicationIdCheck == 1 && _duplicationNickCheck == 1) {
+        CustomCircular(context, '회원가입 진행중...');
+        try {
+          response = await dio.post(BaseURL + '/api/create', data: {
+            'id': _idTextController.text,
+            'pw': _pwTextController.text,
+            'nickName': _nicknameTextController.text,
+            'name': _realNameTextController.text,
+            'schoolName': _schoolTextController.text,
+            'schoolCode': eduOfficeCode,
+            'isAdmin': 0,
+            'isCertificated': 0,
+            'createTime': DateTime.now().toString(),
+            'postCount': 0,
+            'replCount': 0,
+            'email': _emailTextController.text,
+          }); //회원가입시에 필요한데이터 묵음 덩어리
+          if (response.data == "err 발생") {
+            Navigator.pop(context);
+            DialogShow(context, '에러 발생.');
+          } else {
+            Navigator.pop(context);
+            Navigator.pop(context);
+            print(response.data);
+            DialogShow(context, '회원가입이 완료되었습니다.');
+          }
+        } catch (e) {
+          print("에러 발생");
+        }
+      }
+      else {
+        DialogShow(context, '중복체크를 진행해주세요.');
+      }
+    }
   }
 }
 
@@ -538,6 +587,7 @@ class SchoolSearchTextFormField extends StatelessWidget {
   final String label;
   final TextEditingController Controller;
   final TextInputType textInputType;
+
   const SchoolSearchTextFormField({
     required this.Controller,
     required this.label,
